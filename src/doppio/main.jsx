@@ -1,5 +1,5 @@
 const is_localy = location.origin.includes('localhost');
-const download_url = is_localy ? '/bcompT/' : 'dist/';
+const download_url = is_localy ? '/bcompT/' : '/bcompT/';
 
 
 
