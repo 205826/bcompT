@@ -1,0 +1,149 @@
+
+/* ==== header ==== */
+
+#header {
+    text-align: center;
+    font-size: 24px;
+    color: #def2f1;
+    margin: 5px;
+    margin-bottom: 0px;
+    background: #0002;
+    border-radius: 10px;
+    box-shadow: inset -1px 1px 1px 2px #0002;
+    display: flex;
+    height: 44px;
+    line-height: 1.2;
+}
+
+#header a {
+    flex: 1;
+    display: inline-block;
+    text-decoration: none;
+    color: #def2f1;
+    margin: 5px 5px;
+    border-radius: 5px;
+    background-color: rgba(255, 255, 255, 0.1);
+    transition: all 0.2s ease;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+}
+
+#header a:hover {
+    background-color: rgba(255, 255, 255, 0.2);
+}
+
+#header a.active {
+    background-color: rgba(255, 255, 255, 0.15);
+    box-shadow: inset 0 -3px 0 #def2f177;
+    transform: translateY(2px);
+}
+
+#header a:active {
+    transform: translateY(4px);
+    box-shadow: inset 0 -1px 0 rgba(0, 0, 0, 0.3);
+}
+
+#header .submenu {
+    position: absolute;
+    top: 54px;
+    left: 5px;
+    right: 5px;
+
+    
+    text-align: center;
+    font-size: 24px;
+    color: #def2f1;
+    margin-bottom: 0px;
+    background: #0002;
+    border-radius: 10px;
+    box-shadow: inset -1px 1px 1px 2px #0002;
+    display: flex;
+    height: 44px;
+    line-height: 1.2;
+    z-index: 1000;
+
+}
+
+/* ==== body ==== */
+#body {
+    position: absolute;
+    top: 54px;
+    left: 5px;
+    right: 5px;
+    bottom: 5px;
+    z-index: 1;
+}
+
+#body * {
+    box-sizing: border-box;
+}
+
+#body pre {
+    margin: 0px;
+}
+
+#body .insetdiv {
+    box-shadow: inset -1px 1px 1px 2px #0002;
+    background: #0002;
+    padding: 5px;
+    border-radius: 10px;
+}
+
+#body .outsetdiv {
+    box-shadow: 0px 0px 2px 1px rgb(255 255 255 / 18%);
+    background: #ffffff4d;
+    border-radius: 10px;
+}
+
+/* ==== bilet_inp ==== */
+font.bilet_inp:hover {
+    color: #777;
+    cursor: text;
+}
+input.bilet_inp.R_FORMULA {
+    width: 250px;
+    text-align: left;
+}
+input.bilet_inp {
+    width: 57px;
+    text-align: center;
+}
+font.bilet_inp.ISCORECT {
+    color: #7F7;
+}
+font.bilet_inp.ISINCORECT {
+    color: #F77;
+}
+
+/* ==== data-table ==== */
+.data-table {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0;
+}
+
+
+
+    .data-table th, .data-table td {
+        padding: 12px;
+        text-align: left;
+        background-color: #0003;
+        border: 2px solid #fff5;
+        border-top: 0px;
+        border-bottom: 0px;
+        border-radius: 8px; /* Закругленные углы */
+        text-align: center;
+    }
+
+.data-table tr:nth-child(even) {
+    background-color: #0002;
+}
+
+    .data-table tr.isF.data-table-row:hover {
+        cursor: default;
+        background-color: #0005;
+    }
+
+
+.data-table td {
+    transition: background-color 0.3s ease; /* Плавный переход фона */
+}

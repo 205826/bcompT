@@ -1,0 +1,23 @@
+.split-pane {
+    display: flex;
+    height: 100%;
+    width: 100%;
+}
+
+
+.left-pane {
+    height: 100%;
+    margin-right: 5px;
+}
+
+.splitter {
+    cursor: ew-resize;
+    width: 5px;
+}
+
+.right-pane {
+    height: 100%;
+    flex-grow: 1;
+    overflow: auto;
+    margin-left: 5px;
+}
