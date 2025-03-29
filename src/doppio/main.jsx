@@ -1,5 +1,5 @@
-
-
+const is_localy = location.origin.includes('localhost');
+const download_url = is_localy ? '/bcompT/' : 'dist/';
 
 
 
@@ -38,7 +38,7 @@ function constructPersistantFs(cb) {
 
 function download_doppio_zip(log, callback) {
     var t = new XMLHttpRequest();
-    t.open("GET", "/src/doppio/doppio_home.zip");
+    t.open("GET", download_url+"doppio_home.zip");
     t.responseType = "arraybuffer";
     t.addEventListener("load", function (e) {
         callback(t.response)
@@ -77,7 +77,43 @@ const my_doppio = {
         BrowserFS.initialize(mfs);
         mfs.mount('/tmp', new BrowserFS.FileSystem.InMemory());
         mfs.mount('/home', new BrowserFS.FileSystem.InMemory());
-        mfs.mount('/sys', new BrowserFS.FileSystem.XmlHttpRequest('src/doppio/listings.json', '.'));
+        mfs.mount('/sys', new BrowserFS.FileSystem.InMemory());//new BrowserFS.FileSystem.XmlHttpRequest(download_url + (is_localy ? 'listings.json' : 'public_listings.json'), '.'));
+
+        function download_bcomp_jar(cb) {
+
+            log('Скачиваем bcomp.jar...');
+            const fileName = 'bcomp-ng.jar';
+
+            // Fetch the JAR file
+            fetch(download_url + fileName)
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Network response was not ok');
+                    }
+                    return response.blob();
+                })
+                .then(blob => {
+                    const reader = new FileReader();
+                    reader.onload = function (event) {
+                        const arrayBuffer = event.target.result;
+
+                        BrowserFS.initialize(mfs);
+                        fs.writeFile('/sys/' + fileName, new buffer(new Uint8Array(arrayBuffer)), function (err) {
+                            if (err) {
+                                alert(err);
+                            } else {
+                                cb();
+                            }
+                        });
+                    };
+
+                    // Read the Blob as ArrayBuffer
+                    reader.readAsArrayBuffer(blob);
+                })
+                .catch(error => {
+                    alert(error + '');
+                });
+        }
 
         function recursiveCopy(srcFolder, destFolder, progressCb, cb) {
             function copyFile(srcFile, destFile, cb) {
@@ -153,33 +189,35 @@ const my_doppio = {
 
             processDir(srcFolder, destFolder, cb)
         }
-
         constructPersistantFs((persistentFs) => {
             log('Проверяем кэш');
+
             BrowserFS.initialize(persistentFs);
             fs.readdir('/classes/', (err, files) => {
-                BrowserFS.initialize(mfs);
-                mfs.mount('/doppio_home', persistentFs);
+                download_bcomp_jar(() => {
+                    BrowserFS.initialize(mfs);
+                    mfs.mount('/doppio_home', persistentFs);
 
-                if (files && files.length > 0) {
-                    run();
-                } else {
-                    log('Мы подгрузим 40 мегабайт JVM. Вы не против?', () => {
-                        download_doppio_zip(log, (n) => {
-                            mfs.mount("/doppio_home2", new BrowserFS.FileSystem.ZipFS(new buffer(n)));
-                            BrowserFS.initialize(mfs);
-                            recursiveCopy('/doppio_home2', '/doppio_home', (src, dest, size) => {
-                                log(`Extracting ${dest.slice(dest.indexOf('/', 1) + 1)}...`);
-                            }, (err) => {
-                                if (err) {
-                                    log(`Error extracting doppio_home.zip: ${err}`);
-                                } else {
-                                    run();
-                                }
+                    if (files && files.length > 0) {
+                        run();
+                    } else {
+                        log('Мы подгрузим 40 мегабайт JVM. Вы не против?', () => {
+                            download_doppio_zip(log, (n) => {
+                                mfs.mount("/doppio_home2", new BrowserFS.FileSystem.ZipFS(new buffer(n)));
+                                BrowserFS.initialize(mfs);
+                                recursiveCopy('/doppio_home2', '/doppio_home', (src, dest, size) => {
+                                    log(`Extracting ${dest.slice(dest.indexOf('/', 1) + 1)}...`);
+                                }, (err) => {
+                                    if (err) {
+                                        log(`Error extracting doppio_home.zip: ${err}`);
+                                    } else {
+                                        run();
+                                    }
+                                });
                             });
                         });
-                    });
-                }
+                    }
+                });
             });
         });
         //download_doppio_zip(r);
@@ -228,7 +266,7 @@ const my_doppio = {
                 // * vendor/java_home/*
                 doppioHomePath: '/doppio_home',
                 // Add the paths to your class and JAR files in the BrowserFS file system
-                classpath: ['/sys/src/doppio/bcomp-ng.jar']
+                classpath: ['/sys/bcomp-ng.jar']
             }, function (err, jo) {
                 if (run_jvm_t != -1) clearTimeout(run_jvm_t);
                 jvmObject = jo;
